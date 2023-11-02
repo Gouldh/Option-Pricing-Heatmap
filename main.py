@@ -3,6 +3,15 @@ import scipy.stats as si
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
+# -----------------------------------------------------------------------------------
+# Author: Hunter Gould
+# Date: 11/02/2023
+# Description: This project involves the implementation of various option pricing models,
+#              including the Black-Scholes Model, the Heston Model (Stochastic Volatility),
+#              and the Merton Jump Diffusion Model. Additionally, it provides a heatmap
+#              visualization of option prices using the Merton Jump Diffusion Model.
+# -----------------------------------------------------------------------------------
+
 
 # Black-Scholes Model
 def black_scholes(S, X, T, r, sigma):
