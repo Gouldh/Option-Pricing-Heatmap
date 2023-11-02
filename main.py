@@ -46,12 +46,11 @@ def merton_jump_diffusion(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, lambda_
     dt = T / num_steps
     S_t = np.full(num_simulations, S_0, dtype=np.float64)
     v_t = np.full(num_simulations, v_0, dtype=np.float64)
-    sqrt_dt = np.sqrt(dt)
     for _ in range(num_steps):
         z1 = np.random.normal(size=num_simulations)
         z2 = rho * z1 + np.sqrt(1 - rho ** 2) * np.random.normal(size=num_simulations)
-        S_t += r * S_t * dt + np.sqrt(v_t) * S_t * z1 * sqrt_dt
-        v_t += kappa * (theta - v_t) * dt + sigma_v * np.sqrt(v_t) * z2 * sqrt_dt
+        S_t += r * S_t * dt + np.sqrt(v_t) * S_t * z1 * np.sqrt(dt)
+        v_t += kappa * (theta - v_t) * dt + sigma_v * np.sqrt(v_t) * z2 * np.sqrt(dt)
         v_t = np.maximum(v_t, 0)
         jumps = np.random.rand(num_simulations) < lambda_jump * dt
         jump_sizes = np.random.normal(loc=m_jump, scale=delta_jump, size=num_simulations)
