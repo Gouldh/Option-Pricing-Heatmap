@@ -1,39 +1,37 @@
 # Option Pricing Models with Visualization
 
 ## Project Overview
-This repository contains a financial analysis tool designed to calculate option prices using advanced pricing models such as Black-Scholes, Heston, and Merton Jump Diffusion. The tool is implemented in Python and is capable of handling complex mathematical and statistical functions, thanks to libraries like `numpy` and `scipy`.
+This repository offers a financial analysis tool that computes option prices using sophisticated models like Black-Scholes, Heston, and Merton Jump Diffusion. It's written in Python and leverages libraries such as `numpy` and `scipy` for complex calculations.
 
 ## Features
-- **Black-Scholes Model**: Utilizes the well-known Black-Scholes formula for pricing options.
-- **Heston Model**: Incorporates stochastic volatility into the pricing model, capturing more complex market behaviors.
-- **Merton Jump Diffusion Model**: Accounts for sudden price jumps in asset prices, refining the prediction of option prices.
-- **Heatmap Visualization**: Generates a heatmap to visualize option prices across different volatilities and interest rates, offering intuitive insights into the data.
+- **Black-Scholes Model**: Applies the renowned Black-Scholes formula for option pricing.
+- **Heston Model**: Includes stochastic volatility in the pricing model to capture intricate market dynamics.
+- **Merton Jump Diffusion Model**: Considers abrupt price changes in asset valuation for more accurate option pricing.
+- **Heatmap Visualization**: Creates heatmaps to illustrate option price variations across different volatilities and interest rates, providing clear visual data interpretation.
 
 ## Installation
-To use this tool, clone the repository and set up a Python environment with the necessary dependencies.
-```bash
-git clone https://github.com/Gouldh/Option-Pricing-Heatmap.git
-cd Option-Pricing-Heatmap
-pip install -r requirements.txt
-```
+Follow these steps to set up the tool:
 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Gouldh/Option-Pricing-Heatmap.git
+   ```
+2. Navigate to the repository's directory:
+   ```bash
+   cd Option-Pricing-Heatmap
+   ```
+3. Install the required Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 ## Usage
-After installation, you can run the script `main.py` to perform the pricing calculations and generate visualizations.
+To run the pricing models and generate visualizations, execute the `main.py` script:
 
 ```bash
 python main.py
 ```
 
-Please ensure you have a compatible environment set up with all the necessary libraries, such as `numpy`, `scipy`, and `matplotlib`.
-
-## Contributing
-Contributions to this project are welcome. You can contribute in several ways:
-
-1. Submitting a pull request for new features or bug fixes.
-2. Improving documentation or examples.
-3. Reporting issues or suggesting enhancements.
-
-Please read `CONTRIBUTING.md` for details on the code of conduct, and the process for submitting pull requests.
+Make sure your Python environment includes all necessary libraries, such as `numpy`, `scipy`, and `matplotlib`, for the tool to function properly.
 
 ## License
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is open-sourced under the MIT License. For more information, refer to the `LICENSE` file.
