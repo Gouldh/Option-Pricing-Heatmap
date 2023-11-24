@@ -24,7 +24,6 @@ def black_scholes(S, X, T, r, sigma):
     :param float sigma: Volatility of the underlying asset.
     :return: The calculated call option price as a float.
     """
-
     d1 = (np.log(S / X) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
     call_price = S * si.norm.cdf(d1) - X * np.exp(-r * T) * si.norm.cdf(d2)
@@ -48,9 +47,9 @@ def heston(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, num_simulations=10000,
     :param int num_steps: Number of steps in the simulation. Default is 100.
     :return: The estimated option price using the Heston model as a float.
     """
-
     dt = T / num_steps
     option_payoffs = []
+
     for _ in range(num_simulations):
         S_t = S_0
         v_t = v_0
@@ -62,24 +61,22 @@ def heston(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, num_simulations=10000,
             v_t = max(v_t, 0)
         option_payoff = max(S_t - X, 0)
         option_payoffs.append(option_payoff)
+
     average_payoff = np.mean(option_payoffs)
     option_price = np.exp(-r * T) * average_payoff
+
     return option_price
 
 
 # Merton Jump Diffusion Model
-def merton_jump_diffusion(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, lambda_jump, m_jump, delta_jump, num_simulations=10000, num_steps=100):
+def merton_jump_diffusion(S_0, X, T, r, sigma, lambda_jump, m_jump, delta_jump, num_simulations=10000, num_steps=100):
     """
     Calculates the option price using the Merton Jump Diffusion model.
     :param float S_0: Initial price of the underlying asset.
     :param float X: Strike price of the option.
     :param float T: Time to expiration in years.
     :param float r: Risk-free interest rate.
-    :param float kappa: Mean reversion rate of volatility.
-    :param float theta: Long-term mean of volatility.
-    :param float sigma_v: Volatility of volatility.
-    :param float rho: Correlation between asset return and volatility.
-    :param float v_0: Initial variance.
+    :param float sigma: Volatility of the underlying asset.
     :param float lambda_jump: Intensity of the jumps.
     :param float m_jump: Mean of the jump size.
     :param float delta_jump: Volatility of the jump size.
@@ -87,27 +84,26 @@ def merton_jump_diffusion(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, lambda_
     :param int num_steps: Number of steps in the simulation. Default is 100.
     :return: The estimated option price using the Merton Jump Diffusion model as a float.
     """
-
     dt = T / num_steps
     S_t = np.full(num_simulations, S_0, dtype=np.float64)
-    v_t = np.full(num_simulations, v_0, dtype=np.float64)
+
     for _ in range(num_steps):
-        z1 = np.random.normal(size=num_simulations)
-        z2 = rho * z1 + np.sqrt(1 - rho ** 2) * np.random.normal(size=num_simulations)
-        S_t += r * S_t * dt + np.sqrt(v_t) * S_t * z1 * np.sqrt(dt)
-        v_t += kappa * (theta - v_t) * dt + sigma_v * np.sqrt(v_t) * z2 * np.sqrt(dt)
-        v_t = np.maximum(v_t, 0)
-        jumps = np.random.rand(num_simulations) < lambda_jump * dt
+        z = np.random.normal(size=num_simulations)
         jump_sizes = np.random.normal(loc=m_jump, scale=delta_jump, size=num_simulations)
-        S_t[jumps] *= np.exp(jump_sizes[jumps])
+        jumps = np.random.poisson(lambda_jump * dt, size=num_simulations)
+        S_t *= np.exp((r - 0.5 * sigma ** 2) * dt + sigma * np.sqrt(dt) * z)
+        S_t *= np.exp(jumps * jump_sizes)
+
     option_payoffs = np.maximum(S_t - X, 0)
     average_payoff = np.mean(option_payoffs)
     option_price = np.exp(-r * T) * average_payoff
+
     return option_price
 
 
+
 # Visualization (Heatmap)
-def create_heatmap(S_0, X, T, kappa, theta, rho, v_0, lambda_jump, m_jump, delta_jump,
+def create_heatmap(S_0, X, T, lambda_jump, m_jump, delta_jump,
                    volatility_range=(0.1, 0.5), interest_rate_range=(0.01, 0.1),
                    volatility_steps=12, interest_rate_steps=12):
     """
@@ -115,10 +111,6 @@ def create_heatmap(S_0, X, T, kappa, theta, rho, v_0, lambda_jump, m_jump, delta
     :param float S_0: Initial price of the underlying asset.
     :param float X: Strike price of the option.
     :param float T: Time to expiration in years.
-    :param float kappa: Mean reversion rate of volatility.
-    :param float theta: Long-term mean of volatility.
-    :param float rho: Correlation between asset return and volatility.
-    :param float v_0: Initial variance.
     :param float lambda_jump: Intensity of the jumps.
     :param float m_jump: Mean of the jump size.
     :param float delta_jump: Volatility of the jump size.
@@ -139,7 +131,7 @@ def create_heatmap(S_0, X, T, kappa, theta, rho, v_0, lambda_jump, m_jump, delta
     # Calculate option prices for each combination of volatility and interest rate
     for i, r in enumerate(interest_rate_grid):
         for j, sigma_v in enumerate(volatility_grid):
-            price = merton_jump_diffusion(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, lambda_jump, m_jump, delta_jump)
+            price = merton_jump_diffusion(S_0, X, T, r, sigma, lambda_jump, m_jump, delta_jump)
             option_prices_matrix[i, j] = price
 
     # Plotting the heatmap
@@ -180,7 +172,7 @@ if __name__ == "__main__":
     # Calculate option prices
     bs_price = black_scholes(S_0, X, T, r, sigma)
     heston_price = heston(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0)
-    merton_jump_price = merton_jump_diffusion(S_0, X, T, r, kappa, theta, sigma_v, rho, v_0, lambda_jump, m_jump, delta_jump)
+    merton_jump_price = merton_jump_diffusion(S_0, X, T, r, sigma, lambda_jump, m_jump, delta_jump)
 
     # Print results
     print(f"Black-Scholes Price: ${bs_price:.2f}")
@@ -188,4 +180,4 @@ if __name__ == "__main__":
     print(f"Merton Jump Diffusion Price: ${merton_jump_price:.2f}")
 
     # Create heatmap visualization
-    create_heatmap(S_0, X, T, kappa, theta, rho, v_0, lambda_jump, m_jump, delta_jump)
+    create_heatmap(S_0, X, T, lambda_jump, m_jump, delta_jump)
