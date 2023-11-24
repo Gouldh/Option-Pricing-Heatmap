@@ -5,7 +5,7 @@ import matplotlib.ticker as mticker
 
 # -----------------------------------------------------------------------------------
 # Author: Hunter Gould
-# Date: 11/22/2023
+# Date: 11/24/2023
 # Description: This project involves the implementation of various option pricing models,
 #              including the Black-Scholes Model, the Heston Model, and the Merton Jump
 #              Diffusion Model. Additionally, it provides a heatmap visualization of
@@ -99,7 +99,6 @@ def merton_jump_diffusion(S_0, X, T, r, sigma, lambda_jump, m_jump, delta_jump, 
     option_price = np.exp(-r * T) * average_payoff
 
     return option_price
-
 
 
 # Visualization (Heatmap)
